@@ -1,0 +1,46 @@
+&project
+  project_rootname = 'GHV02_300k'
+/
+&raw_grid
+  grid_format = 'fast'
+  data_format = 'ascii'
+/
+&nonlinear_solver_parameters
+time_accuracy = 'steady'
+schedule_cfl     =  10.0   200.0
+schedule_cflturb =   1.0    20.0
+/
+&governing_equations
+  viscous_terms = 'turbulent'
+/
+&reference_physical_properties
+  gridlength_conversion = 0.0254 ! 9.7500000 ! factor to convert grid units to meters
+  dim_input_type = 'dimensional-SI'
+  temperature_units = 'Kelvin'
+  temperature = 221.65
+  density = 0.039466     ! kg/m^3
+  reynolds_number = 19932640.6964
+  mach_number     = 0.95
+  velocity = 283.5323    ! m/s
+  angle_of_attack = 10   ! degrees
+  angle_of_yaw = 0.0     ! degrees
+/
+&code_run_control
+  restart_read       = 'off'
+  steps              = 1000
+  stopping_tolerance = 1.0e-12
+  mixed=.true.
+/
+&global
+  boundary_animation_freq = -1
+/
+&boundary_output_variables
+  number_of_boundaries = -1
+  boundary_list        = '1-3'
+/
+&gpu_support
+  use_cuda = .true.
+  use_cuda_mpi = .true.
+  gpus_per_node = 1
+  use_half_precision = .true.
+/
