@@ -19,14 +19,12 @@ from ensemble_predict import predict_ensemble, ensemble_fn
 from user_defined_test_functions import rosenbrock, rosen_univariate, get_rosen_emulator, sum_emulator, return_sum_emulator, nonstationary_1d_hf, nonstationary_1d_lf, uninformative_1d, nonstationary_2d_hf, nonstationary_2d_lf, uninformative_nd_lf, viscous_simulation_cl_cd
 from optimization_functions import global_optimization
 from accuracy_metrics import NRMSE, sum_log_likelihood_tdist
-# from optimization_functions_uncertainty_scale import *
-# from optimization_functions_preacquisition_warm_start import *
 from plotting_functions import plot_ensemble_details, plot_1d_or_2d_acquisition, plot_convergence_history
 from design_of_experiments_functions import get_training_doe, get_test_doe
 
 ################################################################################
 ################################################################################
-"""                       (0) USER SPECIFIED VARIABLES                       """
+"""                       (1) USER SPECIFIED VARIABLES                       """
 ################################################################################
 ################################################################################
 
@@ -44,8 +42,6 @@ n_scatter_gauss = 128 #32 #64 #256 #
 EI_TOL = 1e-4 #1e-5 #0.25 #3 #0.001 #1e-7 #0.001 #np.inf #0.01 # This depends on the data scale
 MAX_SAMP = 1000 #500 #200 #150 #100 #300 #101 #320 #0 #50 #10 #np.inf
 STEPS_TO_CONVERGE = 3 #1 #2 #
-converged_steps = 0
-adaptive_sampling_converged = False
 
 
 # """ 1D problem """
@@ -141,7 +137,7 @@ y_true_opt = -0.44420104
 
 ################################################################################
 ################################################################################
-"""                            (1) PROBLEM SET UP                            """
+"""                            (2) PROBLEM SET UP                            """
 ################################################################################
 ################################################################################
 
@@ -160,6 +156,8 @@ tf.config.experimental.set_memory_growth(physical_devices[0], True)
 """ OTHER SET-UP """
 
 Nemulator = len(Fe)
+converged_steps = 0
+adaptive_sampling_converged = False
 
 azim_2d = -120 #-150 #-60 # -60 (default) #
 elev_2d = 20 # 30 (default) #
@@ -264,7 +262,7 @@ if not load_data:
 
 ################################################################################
 ################################################################################
-"""                           (3) FIT E2NN ENSEMBLE                          """
+"""                  (3) ACTIVE LEARNING WITH E2NN ENSEMBLE                  """
 ################################################################################
 ################################################################################
 
