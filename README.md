@@ -12,7 +12,7 @@ This problem can be alleviated by running the main_relaunch.py script, which wil
 
 
 Package versions used include:
-
+```
 Package                       Version          
 ----------------------------- ---------------- 
 graphviz                      0.20.1  
