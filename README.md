@@ -25,3 +25,4 @@ scikit-learn                  1.1.2
 scipy                         1.9.1  
 smt                           2.0  
 tensorflow                    2.10.0  
+```
