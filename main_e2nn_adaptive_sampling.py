@@ -302,7 +302,7 @@ while not adaptive_sampling_converged:
         tf.keras.backend.clear_session() 
 
         print("Training E2NN ensemble")
-        E2NN_MODELS, xscale_obj, yscale_obj, fail_1L, fail_2L, ALL_E2NN_MODELS, bad_idxs = fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, X_test_unscaled, Y_test_unscaled, azim_2d, elev_2d)
+        E2NN_MODELS, xscale_obj, yscale_obj, fail_1L, fail_2L, ALL_E2NN_MODELS, bad_idxs = fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, azim_2d, elev_2d)
 
         fitting_failure = fail_1L or fail_2L
         print("Done training E2NN ensemble")
