@@ -1,7 +1,7 @@
 # multi-fidelity-nn-ensemble-examples
 Numerical examples for a Journal article
 
-These codes can be used to replicate the numerical examples in an upcoming Journal article "Epistemic Modeling Uncertainty of Rapid Neural Network Ensembles for Adaptive Learning". The preprint can be accessed at [TBD]. Results will differ somewhat based on random sample initializations, randomness in the neural network initializations, and randomness in the optimizers. 
+These codes can be used to replicate the numerical examples in an upcoming Journal article "Epistemic Modeling Uncertainty of Rapid Neural Network Ensembles for Adaptive Learning". The preprint can be accessed [here](https://arxiv.org/abs/2309.06628). Results will differ somewhat based on random sample initializations, randomness in the neural network initializations, and randomness in the optimizers. 
 
 Instructions:
 main_e2nn_adaptive_sampling.py contains all of the example problems. Simply uncomment the desired problem formulation at the beginning of the script (under code section (1) USER SPECIFIED VARIABLES). Note that the Fun3D problem will not run, because it requires a Fun3D installation and a mesh file. However, the code is included for completeness.
