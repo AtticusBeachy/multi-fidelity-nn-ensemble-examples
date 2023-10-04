@@ -4,7 +4,7 @@ from rann_training import train_E2NN_RaNN_1L, train_E2NN_RaNN_2L
 from ensemble_predict import call_emulators
 from accuracy_metrics import NRMSE
 
-def fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, azim_2d, elev_2d):
+def fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled):
     """
     WARNING: EMULATORS ARE SCALED THE SAME WAY AS THE HF TRAIING DATA. If EMULATORS
     HAVE A MUCH DIFFERENT SCALE THAN THE HF DATA, IT IS LIKELY BETTER TO SCALE THEM 
