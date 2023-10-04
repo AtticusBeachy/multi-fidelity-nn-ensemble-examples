@@ -4,7 +4,7 @@ from rann_training import train_E2NN_RaNN_1L, train_E2NN_RaNN_2L
 from ensemble_predict import call_emulators
 from accuracy_metrics import NRMSE
 
-def fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, X_test_unscaled, Y_test_unscaled, azim_2d, elev_2d):
+def fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, azim_2d, elev_2d):
     """
     WARNING: EMULATORS ARE SCALED THE SAME WAY AS THE HF TRAIING DATA. If EMULATORS
     HAVE A MUCH DIFFERENT SCALE THAN THE HF DATA, IT IS LIKELY BETTER TO SCALE THEM 
@@ -21,14 +21,6 @@ def fit_ensemble(Nsamp, Ndim, Fe, X_train_unscaled, Y_train_unscaled, X_test_uns
 
     X_train = xscale_obj.transform(X_train_unscaled)
     Y_train = yscale_obj.transform(Y_train_unscaled)
-
-#     ################################################################################
-#     """SCALE TEST DATA"""
-# 
-#     # scale to fit sample data
-#     X_test_scaled = xscale_obj.transform(X_test_unscaled)
-#     Y_test_scaled = yscale_obj.transform(Y_test_unscaled.reshape(-1, 1))
-#     Y_test_scaled = Y_test_scaled.flatten()
 
     ################################################################################
     """GET EMULATOR VALUES FOR TRAINING"""
