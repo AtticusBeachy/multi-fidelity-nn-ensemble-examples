@@ -1,7 +1,9 @@
-################################################################################
+###############################################################################
 """USER-DEFINED HIGH-FIDELITY AND LOW-FIDELITY FUNCTIONS"""
 
 import numpy as np
+import random
+
 
 def rosenbrock(X, c1=100.0, c2=1.0):
     """
@@ -10,28 +12,30 @@ def rosenbrock(X, c1=100.0, c2=1.0):
     The function must be 2D or higher
     """
     Y = np.sum(c1*(X[:,1:] - X[:,:-1]**2.0)**2.0 +c2* (1 - X[:,:-1])**2.0, axis=1)
+    # if random.random() < 0.05:
+    #     Y = None
     return(Y)
 
-def rosen_univariate(X, dim, Ndim):
+def rosen_univariate(X, dim, N_DIM):
     """
     A Low Fidelity univariate version of the Rosenbrock function for use as an
     emulator
     X: A 2D numpy array (MUST BE 2D)
-    dim: The dimension selected for the univariate function (0 to Ndim-1)
-    Ndim: The total number of dimensions
+    dim: The dimension selected for the univariate function (0 to N_DIM-1)
+    N_DIM: The total number of dimensions
     """
-    c1 = 100.0* 1.5 * (dim+1) / Ndim
-    c2 = 1.0 + 2 * (dim+1) / Ndim
+    c1 = 100.0* 1.5 * (dim+1) / N_DIM
+    c2 = 1.0 + 2 * (dim+1) / N_DIM
     Xuni = np.zeros(X.shape) # cut through middle of design space (varies with bounds)
     Xuni[:, dim] = X[:,dim]
     Y = rosenbrock(Xuni, c1, c2)
     return(Y)#, Xuni)
 
-def get_rosen_emulator(dim, Ndim):
+def get_rosen_emulator(dim, N_DIM):
     """
     Returns a lambda function for use as an emulator
     """
-    emulator = lambda X : rosen_univariate(X, dim = dim, Ndim = Ndim)
+    emulator = lambda X : rosen_univariate(X, dim = dim, N_DIM = N_DIM)
     return(emulator)
 
 def sum_emulator(X, Fe):
@@ -43,19 +47,19 @@ def sum_emulator(X, Fe):
         Y += emulator(X)
     return(Y)
 
-def scaled_sphere_rosenbrock(X):
-    """
-    sphere function with scaling appropriate to n-dim rosenbrock
-    """
-    Y = 100*np.sum(X**2, axis=1)
-    return(Y)
-
 def return_sum_emulator(Fe):
     """
     Returns a lambda function that is the sum of the input functions
     """
     emulator_sum = lambda X : sum_emulator(X, Fe)
     return(emulator_sum)
+
+def scaled_sphere_rosenbrock(X):
+    """
+    sphere function with scaling appropriate to n-dim rosenbrock
+    """
+    Y = 100*np.sum(X**2, axis=1)
+    return(Y)
 
 def nonstationary_1d_hf(X):
     """
@@ -117,8 +121,8 @@ def uninformative_nd_lf(X):
 
 def rastrigin_function(X):
     """ Optimum at X = [0,...,0], Y = 0 """
-    Ndim = X.shape[1]
-    Y = 10*Ndim + np.sum(X**2 - 10*np.cos(2*np.pi*X), axis = 1)
+    N_DIM = X.shape[1]
+    Y = 10*N_DIM + np.sum(X**2 - 10*np.cos(2*np.pi*X), axis = 1)
     return(Y)
 
 def ackley_function(X):
@@ -128,7 +132,7 @@ def ackley_function(X):
     Y = -20*np.exp(-0.2*np.sqrt(0.5*(x1**2+x2**2))) - np.exp(0.5*(np.cos(2*np.pi*x1)+np.cos(2*np.pi*x2))) + np.e + 20
     return(Y)
 
-################################################################################
+###############################################################################
 ''' CALLING FUN3D '''
 
 def fun3d_simulation_normx(x, out_name, subfolder):
@@ -171,11 +175,14 @@ def fun3d_simulation_normx(x, out_name, subfolder):
         # https://www.cambridge.org/us/files/9513/6697/5546/Appendix_E.pdf
         # Alternative calculation: https://www.grc.nasa.gov/www/BGH/sound.html
         t_table = np.array([200., 220., 240., 260., 280., 300., 320., 340.])
-        cv_table = np.array([0.7153, 0.7155, 0.7158, 0.7162, 0.7168, 0.7177, 0.7188, 0.7202])
-        cp_table = np.array([1.002, 1.003, 1.003, 1.003, 1.004, 1.005, 1.006, 1.007])
+        cv_table = np.array([
+            0.7153, 0.7155, 0.7158, 0.7162, 0.7168, 0.7177, 0.7188, 0.7202])
+        cp_table = np.array([
+            1.002, 1.003, 1.003, 1.003, 1.004, 1.005, 1.006, 1.007])
         gamma_table = cp_table/cv_table    
         
-        interpolation_class = interpolate.interp1d(t_table, gamma_table, fill_value="extrapolate")
+        interpolation_class = interpolate.interp1d(t_table, gamma_table, 
+                                                   fill_value="extrapolate")
         
         gamma = interpolation_class(T)
         
@@ -268,7 +275,8 @@ def fun3d_simulation_normx(x, out_name, subfolder):
         lines = file1.readlines()
         last_line = lines[-1]
         last_line = last_line.split(' ')
-        last_line = [line for line in last_line if len(line.strip())>0] # remove elements with only spaces
+        # remove elements with only spaces
+        last_line = [line for line in last_line if len(line.strip())>0] 
         last_line = list(map(float, last_line))
         CL = last_line[cl_idx]
         CD = last_line[cd_idx]
@@ -332,3 +340,6 @@ def viscous_simulation_cl_cd(xdat, out_name, subfolder):
         xii = xdat[ii,:]
         CL[ii], CD[ii] = fun3d_simulation_normx(xii, out_name, subfolder)
     return(CL/CD)
+
+
+
