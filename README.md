@@ -9,19 +9,32 @@ Unfortunately, TensorFlow has a memory leak. Memory leakage occurs whenever a NN
 
 This problem can be alleviated by running the main_relaunch.py script, which will call main_e2nn_adaptive_sampling.py repeatedly until it completes without error. Before running main_relaunch.py, set load_data=True at the start of main_e2nn_adaptive_sampling.py. This will ensure the script picks up where it left off when it is re-run after crashing. Also, delete or move the file state_to_load.pkl (if it exists) so that it is not loaded on the first run of main_e2nn_adaptive_sampling.py. 
 
+(Update 10/18/2024)
+The latest version of TensorFlow has a [bug](https://github.com/keras-team/keras/issues/20333) which causes a crash whenever custom activation functions are used. 
+
+For example, when defining a custom activation function as described in the documentation [here](https://www.tensorflow.org/api_docs/python/tf/keras/utils/get_custom_objects)
+```python
+import tensorflow as tf
+from tensorflow.keras.utils import get_custom_objects
+fourier = lambda x : tf.sin(freq*x)
+get_custom_objects()["fourier"] = Activation(fourier)
+```
+the code will crash if the custom activation function is ever used. 
+
+The code has been updated to work around this issue. 
+
 
 Package versions used include:
 ```
 Package                       Version          
 ----------------------------- ---------------- 
-graphviz                      0.20.1  
-keras                         2.10.0  
-matplotlib                    3.6.0  
-numpy                         1.23.3  
-openmdao                      3.20.0  
-pyDOE2                        1.3.0  
-scikit-learn                  1.1.2  
-scipy                         1.9.1  
-smt                           2.0  
-tensorflow                    2.10.0  
+tensorflow                    2.17.0  
+keras                         3.5.0  
+scikit-learn                  1.5.2  
+numpy                         1.26.4  
+scipy                         1.14.1  
+matplotlib                    3.9.2  
+pydot                         3.0.2
+pyDOE3                        1.0.4  
 ```
+
