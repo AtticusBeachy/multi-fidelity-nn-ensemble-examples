@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 from build_e2nn_one_layer import build_e2nn_one_layer
@@ -75,15 +76,15 @@ def build_ensemble(EMULATOR_FUNCTIONS, x_train_raw, y_train_raw, LB, UB,
         N_COPY_ARCH = 2  # number of copies of each NN architecture
 
         ensemble_settings = N_COPY_ARCH*[
-            {"n_layers": 1, "activation": "fourier_low_1layer"},
-            {"n_layers": 1, "activation": "fourier_med_1layer"},
-            {"n_layers": 1, "activation": "fourier_high_1layer"},
-            {"n_layers": 1, "activation": "swish"},
+            {"n_layers": 1, "activation_name": "fourier_low_1layer", "activation_function": lambda x: tf.sin(1.0*x)},
+            {"n_layers": 1, "activation_name": "fourier_med_1layer", "activation_function": lambda x: tf.sin(1.1*x)},
+            {"n_layers": 1, "activation_name": "fourier_high_1layer", "activation_function": lambda x: tf.sin(1.2*x)},
+            {"n_layers": 1, "activation_name": "swish", "activation_function": "swish"},
         
-            {"n_layers": 2, "activation": "fourier_low_2layer"},
-            {"n_layers": 2, "activation": "fourier_med_2layer"},
-            {"n_layers": 2, "activation": "fourier_high_2layer"},
-            {"n_layers": 2, "activation": "swish"},
+            {"n_layers": 2, "activation_name": "fourier_low_2layer", "activation_function": lambda x: tf.sin(1.0*x)},
+            {"n_layers": 2, "activation_name": "fourier_med_2layer", "activation_function": lambda x: tf.sin(1.1*x)},
+            {"n_layers": 2, "activation_name": "fourier_high_2layer", "activation_function": lambda x: tf.sin(1.2*x)},
+            {"n_layers": 2, "activation_name": "swish", "activation_function": "swish"},
         ]
 
     NUM_MODELS_TOTAL = len(ensemble_settings)
@@ -96,15 +97,18 @@ def build_ensemble(EMULATOR_FUNCTIONS, x_train_raw, y_train_raw, LB, UB,
 
     for settings in ensemble_settings:
         n_layers = settings["n_layers"]
-        activation = settings["activation"]
+        activation_name = settings["activation_name"]
+        activation_function = settings["activation_function"]
         if n_layers==1:
             nn, wt = build_e2nn_one_layer(x_train, y_train, emulator_train, 
                                           dtype=dtype, 
-                                          activation=activation)
+                                          activation_name=activation_name,
+                                          activation_function = activation_function)
         elif n_layers==2:
             nn, wt = build_e2nn_two_layer(x_train, y_train, emulator_train, 
                                           dtype=dtype, 
-                                          activation=activation)
+                                          activation_name=activation_name,
+                                          activation_function = activation_function)
         else:
             Error(f"Number of hidden layers must be 1 or 2, not {n_layers}")
         ALL_E2NN_MODELS.append(nn)
@@ -120,9 +124,9 @@ def build_ensemble(EMULATOR_FUNCTIONS, x_train_raw, y_train_raw, LB, UB,
 
     for i, setting in enumerate(settings):
         n_layers = settings["n_layers"]
-        activation = settings["activation"]
+        activation_name = settings["activation_name"]
         
-        if "fourier" in activation:
+        if "fourier" in activation_name:
             if n_layers==1:
                 fourier_1_layer_idx = np.append(fourier_1_layer_idx, i)
             elif n_layers==2: 

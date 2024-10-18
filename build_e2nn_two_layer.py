@@ -6,7 +6,9 @@ from tensorflow import keras
 from moore_penrose_regression import moore_penrose_regression
 
 def build_e2nn_two_layer(x_train, y_train, emulator_train, dtype, 
-                         activation="fourier"):
+                         activation_name="fourier",
+                         activation_function = lambda x: tf.sin(x)
+                         ):
     """
     builds an e2nn model with two hidden layers
     returns e2nn model and maximum weight from training
@@ -16,12 +18,12 @@ def build_e2nn_two_layer(x_train, y_train, emulator_train, dtype,
     n_train, N_DIM = x_train.shape
 
     n_nodes_L1 = max(5*N_DIM, 200)
-    n_nodes_L2 = max(2*n_train, 5000)
+    n_nodes_L2 = max(2*n_train, 5_000)
 
     # bias
-    if "fourier" in activation:
+    if "fourier" in activation_name:
         b_init = keras.initializers.RandomUniform(minval=0, maxval=2*math.pi)
-    elif activation=="swish":
+    elif activation_name=="swish":
         b_init = keras.initializers.RandomUniform(minval=-4, maxval=4, seed=None)
     else:
         Error("Activation not 'fourier' varient or 'swish'")
@@ -31,7 +33,7 @@ def build_e2nn_two_layer(x_train, y_train, emulator_train, dtype,
     emulator_input = keras.Input(shape=[N_EMULATORS], dtype = dtype, name="emulators")
 
     L1_ordinary = keras.layers.Dense(n_nodes_L1, input_shape = [N_DIM],
-                                     activation=activation,
+                                     activation=activation_function,
                                      dtype = dtype,
                                      kernel_initializer="glorot_normal", 
                                      bias_initializer=b_init,
@@ -42,7 +44,7 @@ def build_e2nn_two_layer(x_train, y_train, emulator_train, dtype,
 
     L2_ordinary = keras.layers.Dense(n_nodes_L2, 
                                      input_shape=[n_nodes_L1+N_DIM+N_EMULATORS],
-                                     activation=activation,
+                                     activation=activation_function,
                                      dtype = dtype,
                                      kernel_initializer="glorot_normal", 
                                      bias_initializer=b_init,

@@ -30,9 +30,12 @@ def plot_ensemble_details(E2NN_MODELS, ALL_E2NN_MODELS, bad_idxs,
     NUM_MODELS = len(E2NN_MODELS)
     NUM_MODELS_TOTAL = len(ALL_E2NN_MODELS)
 
+    # prevent shape mismatch plotting errors
+    Y_train_unscaled = Y_train_unscaled.flatten()
+
     ###########################################################################
     """ GET VALUES FOR PLOTTING """
-    
+
     Nsamp, Ndim = X_train_unscaled.shape
 
     X_plot = X_test_unscaled #np.linspace(lb, ub, 500)

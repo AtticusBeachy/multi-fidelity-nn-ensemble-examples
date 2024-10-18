@@ -21,6 +21,10 @@ def plot_convergence_history(Xopts, Yopts, X_train_unscaled, Y_train_unscaled,
     """  """
     Nsamp, Ndim = X_train_unscaled.shape
 
+    # prevent shape mismatch plotting errors
+    Y_train_unscaled = Y_train_unscaled.flatten()
+
+
     Niters = Yopts.size
     iters = np.array(range(1, Niters+1)) #list(range(1, Niters+1)) #
 

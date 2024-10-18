@@ -36,7 +36,7 @@ from user_defined_test_functions import rosenbrock, rosen_univariate, \
 ################################################################################
 ################################################################################
 
-resume_saved_state = False #True # #If True, will try to load saved data. Generates data on failure
+resume_saved_state = True #False # #If True, will try to load saved data. Generates data on failure
 
 # Rejection tolerances for individual e2nn models
 ERR_TOL = 0.001 # max error
@@ -58,17 +58,16 @@ adaptive_sampling_converged = False
 N_COPY_ARCH = 2  # number of copies of each NN architecture
 
 ensemble_settings = N_COPY_ARCH*[
-    {"n_layers": 1, "activation": "fourier_low_1layer"},
-    {"n_layers": 1, "activation": "fourier_med_1layer"},
-    {"n_layers": 1, "activation": "fourier_high_1layer"},
-    {"n_layers": 1, "activation": "swish"},
+    {"n_layers": 1, "activation_name": "fourier_low_1layer"},
+    {"n_layers": 1, "activation_name": "fourier_med_1layer"},
+    {"n_layers": 1, "activation_name": "fourier_high_1layer"},
+    {"n_layers": 1, "activation_name": "swish"},
 
-    {"n_layers": 2, "activation": "fourier_low_2layer"},
-    {"n_layers": 2, "activation": "fourier_med_2layer"},
-    {"n_layers": 2, "activation": "fourier_high_2layer"},
-    {"n_layers": 2, "activation": "swish"},
+    {"n_layers": 2, "activation_name": "fourier_low_2layer"},
+    {"n_layers": 2, "activation_name": "fourier_med_2layer"},
+    {"n_layers": 2, "activation_name": "fourier_high_2layer"},
+    {"n_layers": 2, "activation_name": "swish"},
 ]
-
 
 OPTIMIZATION_PROBLEM = True #False #
 
@@ -96,39 +95,39 @@ OPTIMIZATION_PROBLEM = True #False #
 # 
 
 
-# """ 2D problem """
-# N_DIM = 2 #10 #1 #20 #3 #3 #1 #2 #
-# n_train = 8 #(N_DIM+1)*(N_DIM+2)//2 #3 #100 #3000 #2000 #1000 #200 #10*N_DIM 
-# TRUE_FUNCTION = nonstationary_2d_hf
-# emulator_functions = [nonstationary_2d_lf]
-# # emulator_functions = [uninformative_nd_lf]
-# LB = np.array([0.05, 0]) #0.0 # -2 + np.zeros([N_DIM]) #np.array([-2, -2])
-# UB = np.array([1.05, 1])
-# X_TRUE_OPT = np.array([[0.221173397155865137351525548116, 0.0]]) #np.array([[0.22117339715586513735, 0.0]]) #
-# Y_TRUE_OPT = -0.44420104
-
-
-""" Rosenbrock problem """
-# Rosenbrock (nd)
-N_DIM = 6 #4 #20 #10 #1 #3 #3 #1 #2 #
-n_train = (N_DIM+1)*(N_DIM+2)//2 #8 #
-TRUE_FUNCTION = rosenbrock
+""" 2D problem """
+N_DIM = 2 #10 #1 #20 #3 #3 #1 #2 #
+n_train = 8 #(N_DIM+1)*(N_DIM+2)//2 #3 #100 #3000 #2000 #1000 #200 #10*N_DIM 
+TRUE_FUNCTION = nonstationary_2d_hf
+emulator_functions = [nonstationary_2d_lf]
 # emulator_functions = [uninformative_nd_lf]
-# emulator_functions = [scaled_sphere_rosenbrock]
-emulator_functions = []
-for ii in range(N_DIM):
-    emulator = get_rosen_emulator(dim=ii, N_DIM=N_DIM)
-    emulator_functions.append(emulator)
+LB = np.array([0.05, 0]) #0.0 # -2 + np.zeros([N_DIM]) #np.array([-2, -2])
+UB = np.array([1.05, 1])
+X_TRUE_OPT = np.array([[0.221173397155865137351525548116, 0.0]]) #np.array([[0.22117339715586513735, 0.0]]) #
+Y_TRUE_OPT = -0.44420104
 
-# sum emulator
-emulator_sum = return_sum_emulator(emulator_functions.copy())
-emulator_functions.append(emulator_sum)
 
-LB = -2*np.ones([N_DIM]) #0.0 # -2 + np.zeros([N_DIM]) #np.array([-2, -2])
-UB = 2*np.ones([N_DIM]) #1.0 #  2 + np.zeros([N_DIM]) #np.array([ 2,  2])
-
-X_TRUE_OPT = np.ones(N_DIM).reshape(1, -1)
-Y_TRUE_OPT = 0.0
+# """ Rosenbrock problem """
+# # Rosenbrock (nd)
+# N_DIM = 6 #4 #20 #10 #1 #3 #3 #1 #2 #
+# n_train = (N_DIM+1)*(N_DIM+2)//2 #8 #
+# TRUE_FUNCTION = rosenbrock
+# # emulator_functions = [uninformative_nd_lf]
+# # emulator_functions = [scaled_sphere_rosenbrock]
+# emulator_functions = []
+# for ii in range(N_DIM):
+#     emulator = get_rosen_emulator(dim=ii, N_DIM=N_DIM)
+#     emulator_functions.append(emulator)
+# 
+# # sum emulator
+# emulator_sum = return_sum_emulator(emulator_functions.copy())
+# emulator_functions.append(emulator_sum)
+# 
+# LB = -2*np.ones([N_DIM]) #0.0 # -2 + np.zeros([N_DIM]) #np.array([-2, -2])
+# UB = 2*np.ones([N_DIM]) #1.0 #  2 + np.zeros([N_DIM]) #np.array([ 2,  2])
+# 
+# X_TRUE_OPT = np.ones(N_DIM).reshape(1, -1)
+# Y_TRUE_OPT = 0.0
 
 
 
@@ -212,6 +211,7 @@ if resume_saved_state:
         EIs_at_true_opt = current_state["EIs_at_true_opt"]
         nrmse_s = current_state["nrmse_s"]
         sum_log_likelihoods = current_state["sum_log_likelihoods"]
+        samples_each_iter = current_state["samples_each_iter"]
         min_idx = current_state["min_idx"]
         Yopts = current_state["Yopts"]
         Xopts = current_state["Xopts"]
@@ -280,30 +280,54 @@ while not adaptive_sampling_converged:
     # NNs using the frequncy pass checks.
     frequencies_good = False
     while not frequencies_good:
-        # Add scaled fourier functions as custom activation functions
+        # # Add scaled fourier functions as custom activation functions
+        # # (This works in Tensorflow 2.10.0 but is broken in TensorFlow 2.17.0)
+        # # (Instead, create lambda functions for the activations)
 
-        fourier_low_1layer = fourier_activation_lambda(1*fourier_factor_1L)
-        fourier_med_1layer = fourier_activation_lambda(1.1*fourier_factor_1L)
-        fourier_high_1layer = fourier_activation_lambda(1.2*fourier_factor_1L)
+        # fourier_low_1layer = fourier_activation_lambda(1*fourier_factor_1L)
+        # fourier_med_1layer = fourier_activation_lambda(1.1*fourier_factor_1L)
+        # fourier_high_1layer = fourier_activation_lambda(1.2*fourier_factor_1L)
 
-        get_custom_objects().update(
-            {"fourier_low_1layer": Activation(fourier_low_1layer)})
-        get_custom_objects().update(
-            {"fourier_med_1layer": Activation(fourier_med_1layer)})
-        get_custom_objects().update(
-            {"fourier_high_1layer": Activation(fourier_high_1layer)})
+        # get_custom_objects().update(
+        #     {"fourier_low_1layer": Activation(fourier_low_1layer)})
+        # get_custom_objects().update(
+        #     {"fourier_med_1layer": Activation(fourier_med_1layer)})
+        # get_custom_objects().update(
+        #     {"fourier_high_1layer": Activation(fourier_high_1layer)})
 
 
-        fourier_low_2layer = fourier_activation_lambda(1*fourier_factor_2L)
-        fourier_med_2layer = fourier_activation_lambda(1.1*fourier_factor_2L)
-        fourier_high_2layer = fourier_activation_lambda(1.2*fourier_factor_2L)
+        # fourier_low_2layer = fourier_activation_lambda(1*fourier_factor_2L)
+        # fourier_med_2layer = fourier_activation_lambda(1.1*fourier_factor_2L)
+        # fourier_high_2layer = fourier_activation_lambda(1.2*fourier_factor_2L)
 
-        get_custom_objects().update(
-            {"fourier_low_2layer": Activation(fourier_low_2layer)})
-        get_custom_objects().update(
-            {"fourier_med_2layer": Activation(fourier_med_2layer)})
-        get_custom_objects().update(
-            {"fourier_high_2layer": Activation(fourier_high_2layer)})
+        # get_custom_objects().update(
+        #     {"fourier_low_2layer": Activation(fourier_low_2layer)})
+        # get_custom_objects().update(
+        #     {"fourier_med_2layer": Activation(fourier_med_2layer)})
+        # get_custom_objects().update(
+        #     {"fourier_high_2layer": Activation(fourier_high_2layer)})
+
+        
+        # Add activation functions to settings:
+        for settings in ensemble_settings:
+            activation_name = settings["activation_name"]
+            if activation_name == "swish":
+                settings["activation_function"] = "swish"
+
+            elif activation_name == "fourier_low_1layer":
+                settings["activation_function"] = fourier_activation_lambda(1.0*fourier_factor_1L)
+            elif activation_name == "fourier_med_1layer":
+                settings["activation_function"] = fourier_activation_lambda(1.1*fourier_factor_1L)
+            elif activation_name == "fourier_high_1layer":
+                settings["activation_function"] = fourier_activation_lambda(1.2*fourier_factor_1L)
+
+            elif activation_name == "fourier_low_2layer":
+                settings["activation_function"] = fourier_activation_lambda(1.0*fourier_factor_2L)
+            elif activation_name == "fourier_med_2layer":
+                settings["activation_function"] = fourier_activation_lambda(1.1*fourier_factor_2L)
+            elif activation_name == "fourier_high_2layer":
+                settings["activation_function"] = fourier_activation_lambda(1.2*fourier_factor_2L)
+
 
         ########################################################################
         """ TRAIN ENSEMBLE """
@@ -408,7 +432,7 @@ while not adaptive_sampling_converged:
 
     if len(X_TRUE_OPT):
         EIs_at_true_opt = np.vstack([
-            EIs_at_true_opt, float(-obj_fn(X_TRUE_OPT))
+            EIs_at_true_opt, float(-obj_fn(X_TRUE_OPT)[0])
         ])
 
         mu_opt, sig_opt, df = predict_ensemble(X_TRUE_OPT, e2nn_models, 
@@ -434,7 +458,7 @@ while not adaptive_sampling_converged:
 
         nrmse_s = np.vstack([nrmse_s, e2nn_test_nrmse])
         sum_log_likelihoods = np.vstack([
-            sum_log_likelihoods, float(e2nn_test_sum_log_likelihood[0])
+            sum_log_likelihoods, float(e2nn_test_sum_log_likelihood)
         ])
 
     # write training results to text document
